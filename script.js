@@ -5,6 +5,22 @@ const menu = document.getElementById('menu');
 const playBtn = document.getElementById('playBtn');
 const backBtn = document.getElementById('backBtn');
 
+//Crear sonido simple NO WAV es una API
+function createBeepSound() {
+  const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+  const sampleRate = audioContext.sampleRate;
+  const buffer = audioContext.createBuffer(1, sampleRate * 0.1, sampleRate);
+  const data = buffer.getChannelData(0);
+  
+  for (let i = 0; i < buffer.length; i++) {
+    data[i] = Math.sin(2 * Math.PI * 400 * i / sampleRate) * (1 - i / buffer.length) * 0.3;
+  }
+  
+  return { audioContext, buffer };
+}
+
+let soundData = null;
+
 //Parámetros del pájaro
 let bird = {
   x: 100,
@@ -127,12 +143,31 @@ function loop() {
   requestAnimationFrame(loop);
 }
 
+//Función para reproducir sonido
+function playSound() {
+  try {
+    if (!soundData) {
+      soundData = createBeepSound();
+    }
+    
+    const source = soundData.audioContext.createBufferSource();
+    source.buffer = soundData.buffer;
+    source.connect(soundData.audioContext.destination);
+    source.start(0);
+  } catch (e) {
+    console.log('Error al reproducir sonido:', e);
+  }
+}
+
 //Control de teclas
 document.addEventListener('keydown', e => {
   if (e.code === 'Space') {
     if (!playing) return;
     if (gameOver) restartGame();
-    else bird.velocity = bird.lift;
+    else {
+      bird.velocity = bird.lift;
+      playSound();
+    }
   }
 });
 
