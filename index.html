@@ -4,38 +4,23 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Mini Flappy JS</title>
-  <style>
-    body {
-      background: skyblue;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      height: 100vh;
-      margin: 0;
-      overflow: hidden;
-      font-family: Arial, sans-serif;
-    }
-
-    #game {
-      background: linear-gradient(to bottom, #87ceeb, #4ec0ca);
-      border: 3px solid #333;
-      border-radius: 10px;
-      display: block;
-    }
-
-    #score {
-      margin-top: 10px;
-      font-size: 22px;
-      font-weight: bold;
-      color: white;
-      text-shadow: 2px 2px 4px #000;
-    }
-  </style>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
+  <!-- Menú principal -->
+  <div id="menu">
+    <h1>Flappy Game</h1>
+    <button id="playBtn">Jugar</button>
+    <p>Presiona ESPACIO para saltar</p>
+  </div>
+
+  <!-- Lienzo del juego -->
   <canvas id="game" width="400" height="500"></canvas>
   <div id="score">Puntaje: 0</div>
+
+  <!-- Botón volver al menú -->
+  <button id="backBtn">Volver al menú</button>
+
   <script src="script.js"></script>
 </body>
 </html>

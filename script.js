@@ -1,8 +1,11 @@
 const canvas = document.getElementById('game');
 const ctx = canvas.getContext('2d');
 const scoreEl = document.getElementById('score');
+const menu = document.getElementById('menu');
+const playBtn = document.getElementById('playBtn');
+const backBtn = document.getElementById('backBtn');
 
-// 🐤 Parámetros del pájaro
+//Parámetros del pájaro
 let bird = {
   x: 100,
   y: 250,
@@ -16,12 +19,12 @@ let pipes = [];
 let frame = 0;
 let score = 0;
 let gameOver = false;
+let playing = false;
 
-// 🖼️ Imagen del pájaro (opcional)
 const birdImg = new Image();
-birdImg.src = 'bird.png'; // agrega una imagen llamada bird.png en tu carpeta
+birdImg.src = 'bird.png';
 
-// 🎨 Dibujar pájaro (usa imagen si carga, si no, círculo)
+//Dibujar pájaro
 function drawBird() {
   if (birdImg.complete && birdImg.naturalHeight !== 0) {
     ctx.drawImage(birdImg, bird.x - bird.size, bird.y - bird.size, bird.size * 2, bird.size * 2);
@@ -33,7 +36,7 @@ function drawBird() {
   }
 }
 
-// 🌿 Dibujar tubos
+//Dibujar tubos
 function drawPipes() {
   ctx.fillStyle = 'green';
   pipes.forEach(pipe => {
@@ -42,7 +45,7 @@ function drawPipes() {
   });
 }
 
-// 🕹️ Actualizar pájaro
+//Actualizar pájaro
 function updateBird() {
   bird.velocity += bird.gravity;
   bird.y += bird.velocity;
@@ -52,12 +55,11 @@ function updateBird() {
   }
 }
 
-// 🚧 Actualizar tubos con puntaje arreglado
+//Actualizar tubos con puntaje
 function updatePipes() {
-  // Cada 160 frames crea un tubo nuevo
   if (frame % 160 === 0) {
     let top = Math.random() * (canvas.height / 2);
-    let gap = 200; // 🔹 mayor espacio vertical
+    let gap = 200;
     pipes.push({
       x: canvas.width,
       width: 55,
@@ -68,9 +70,8 @@ function updatePipes() {
   }
 
   pipes.forEach(pipe => {
-    pipe.x -= 1.1; // 🔹 velocidad más lenta
+    pipe.x -= 1.1;
 
-    // Colisión
     if (
       bird.x + bird.size > pipe.x &&
       bird.x - bird.size < pipe.x + pipe.width &&
@@ -79,7 +80,6 @@ function updatePipes() {
       endGame();
     }
 
-    // ✅ Puntaje (cuando el tubo pasa completamente)
     if (!pipe.passed && pipe.x + pipe.width < bird.x) {
       pipe.passed = true;
       score++;
@@ -87,23 +87,22 @@ function updatePipes() {
     }
   });
 
-  // eliminar tubos fuera de la pantalla
   pipes = pipes.filter(pipe => pipe.x + pipe.width > 0);
 }
 
-// ☠️ Fin del juego
+//Fin del juego
 function endGame() {
   gameOver = true;
   ctx.fillStyle = 'rgba(0,0,0,0.5)';
   ctx.fillRect(0, 0, canvas.width, canvas.height);
   ctx.fillStyle = 'white';
   ctx.font = '30px Arial';
-  ctx.fillText('GAME OVER', 130, 250);
-  ctx.font = '20px Arial';
-  ctx.fillText('Presiona ESPACIO para reiniciar', 70, 290);
+  ctx.fillText('GAME OVER', 120, 230);
+  ctx.font = '18px Arial';
+  ctx.fillText('Presiona ESPACIO para reiniciar', 60, 270);
 }
 
-// 🔄 Reiniciar juego
+//Reiniciar juego
 function restartGame() {
   bird.y = 250;
   bird.velocity = 0;
@@ -115,9 +114,9 @@ function restartGame() {
   loop();
 }
 
-// 🔁 Loop principal
+//Loop principal
 function loop() {
-  if (gameOver) return;
+  if (!playing || gameOver) return;
 
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   drawBird();
@@ -128,12 +127,30 @@ function loop() {
   requestAnimationFrame(loop);
 }
 
-// ⌨️ Controles
+//Control de teclas
 document.addEventListener('keydown', e => {
   if (e.code === 'Space') {
+    if (!playing) return;
     if (gameOver) restartGame();
     else bird.velocity = bird.lift;
   }
 });
 
-loop();
+//Iniciar desde el menú
+playBtn.addEventListener('click', () => {
+  menu.style.display = 'none';
+  canvas.style.display = 'block';
+  scoreEl.style.display = 'block';
+  backBtn.style.display = 'block';
+  playing = true;
+  restartGame();
+});
+
+//Volver al menú
+backBtn.addEventListener('click', () => {
+  playing = false;
+  canvas.style.display = 'none';
+  scoreEl.style.display = 'none';
+  backBtn.style.display = 'none';
+  menu.style.display = 'block';
+});
