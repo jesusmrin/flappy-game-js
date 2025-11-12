@@ -19,3 +19,11 @@ canvas {
   border: 2px solid #000;
   border-radius: 8px;
 }
+
+#score {
+  position: absolute;
+  top: 20px;
+  font-size: 24px;
+  color: black;
+  font-weight: bold;
+}
